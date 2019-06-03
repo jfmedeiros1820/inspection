@@ -1,11 +1,15 @@
 package br.com.inspection.services;
 
 import br.com.inspection.domain.Square;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SquaresServiceImpl implements SquaresService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SquaresServiceImpl.class);
 
     private Square square;
     private List<Integer> values = new ArrayList<>();
@@ -18,20 +22,24 @@ public class SquaresServiceImpl implements SquaresService {
     }
 
     public int getTotalArea() {
+        logger.info("Getting total area with spots");
         return this.values.stream().reduce(0, Integer::sum);
     }
 
     public int getBiggestSpotArea() {
+        logger.info("Getting the biggest spot area");
         int biggestSpotArea = 0;
         if(this.square != null) {
             biggestSpotArea = Math.max(this.square.getFirstPositionMaxSpotArea(0), this.square.getSecondPositionMaxSpotArea(0));
             biggestSpotArea = Math.max(biggestSpotArea, this.square.getThirdPositionMaxSpotArea(0));
             biggestSpotArea = Math.max(biggestSpotArea, this.square.getFourthPositionMaxSpotArea(0));
         }
+        logger.info("Biggest spot area is: " + biggestSpotArea);
         return biggestSpotArea;
     }
 
     public int calculateNumberOfSpots() {
+        logger.info("Starting calculation of the number of spots");
         int spots = 0;
         for (int i = 0; i < values.size(); i++) {
             boolean hasSpot;
@@ -56,6 +64,7 @@ public class SquaresServiceImpl implements SquaresService {
                 spots++;
             }
         }
+        logger.info("Number of spots is: " + spots);
         return spots;
     }
 

@@ -4,6 +4,8 @@ import br.com.inspection.domain.InspectionResult;
 import br.com.inspection.domain.Piece;
 import br.com.inspection.services.InspectorService;
 import br.com.inspection.services.InspectorServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -18,6 +20,8 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 public class InspectorController {
 
+    private static final Logger logger = LoggerFactory.getLogger(InspectorController.class);
+
     private InspectorService inspectorService;
 
     public InspectorController() {
@@ -30,6 +34,7 @@ public class InspectorController {
 
     @POST
     public Response inspect(Piece piece) {
+        logger.info("Receiving piece to be inspected");
         if(!isSquaresValid(piece.getSquaresGrouped())) {
             return Response
                     .status(Response.Status.BAD_REQUEST)
@@ -41,15 +46,18 @@ public class InspectorController {
     }
 
     private static boolean isSquaresValid(List<String> squares) {
+        logger.info("Validating piece information");
         for (String square: squares) {
             String squareClean = square.substring(1, square.length() - 1);
             boolean hasInvalidCharacter = !squareClean.matches("[0-9, /,]+");
             boolean hasMoreThanFourElements = squareClean.split(",").length > 4;
 
             if(hasInvalidCharacter || hasMoreThanFourElements) {
+                logger.error("Piece format is invalid");
                 return false;
             }
         }
+        logger.info("Piece is valid");
         return true;
     }
 }
